@@ -12,17 +12,20 @@ GAME_DATA = [
     {"word": "Giraffe", "image": "🦒", "letter": "G"}
 ]
 
+def reset_game():
+    st.session_state.current_level = 0
+    st.session_state.score = 0
+    st.session_state.game_over = False
+
 def letter_matching_game():
+    # Initialize session state if not exists
+    if 'current_level' not in st.session_state:
+        reset_game()
+
     st.title("🧩 Letter Matching Game")
     
-    # Initialize session state variables
-    if 'current_level' not in st.session_state:
-        st.session_state.current_level = 0
-        st.session_state.score = 0
-        st.session_state.game_over = False
-
     # If game is not over
-    if not st.session_state.game_over:
+    if not st.session_state.get('game_over', False):
         # Get current game item
         current_item = GAME_DATA[st.session_state.current_level]
         
@@ -46,10 +49,8 @@ def letter_matching_game():
                         # Move to next level or end game
                         if st.session_state.current_level < len(GAME_DATA) - 1:
                             st.session_state.current_level += 1
-                            st.experimental_rerun()
                         else:
                             st.session_state.game_over = True
-                            st.experimental_rerun()
         
         # Display current score
         st.write(f"### Score: {st.session_state.score}")
@@ -62,10 +63,11 @@ def letter_matching_game():
         
         # Restart game
         if st.button("Play Again"):
-            st.session_state.current_level = 0
-            st.session_state.score = 0
-            st.session_state.game_over = False
-            st.experimental_rerun()
+            reset_game()
 
 # Run the game
-letter_matching_game()
+def main():
+    letter_matching_game()
+
+if __name__ == "__main__":
+    main()
